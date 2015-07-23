@@ -108,8 +108,10 @@ def initialise_callbacks():
     cb=mice.Murmur.ServerCallbackPrx.uncheckedCast(adapter.addWithUUID(ServerCallbackI(s, adapter)))
     s.addCallback(cb)
 
-def parse_text_command(user, command):
-    command = command[1:]
+def parse_text_command(user, command_text):
+    command_text = command_text[1:] # Strip command prefix
+    command = command_text.split()[0] # split on arbitrary strings of white-space characters
+    args = command_text.split()[1:] 
     if command == 'hello':
         s.sendMessageChannel(0, True, "Hello")
     elif command == 'stillhere' or command == 'poke':
