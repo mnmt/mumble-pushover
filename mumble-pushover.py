@@ -111,7 +111,7 @@ def initialise_callbacks():
 def parse_text_command(user, command_text):
     command_text = command_text[1:] # Strip command prefix
     command = command_text.split()[0] # split on arbitrary strings of white-space characters
-    args = command_text.split()[1:] 
+    args = command_text.split()[1:]
     if command == 'hello':
         s.sendMessageChannel(0, True, "Hello")
     elif command == 'stillhere' or command == 'poke':
@@ -126,19 +126,22 @@ def parse_text_command(user, command_text):
         s.kickUser(kicksession, 'You lose! >:D')
     elif command == 'history' or command == 'hist':
         cmdHist(user)
+    elif command == 'insult' and len(args)==1: # Since for now just want a username as argument
+        cmdInsult(user,args)
 
 def cmdHist(user):
-    try:
-        msg_list = ["<br>User  -  Last Logged Out"] #Start everything on line below [server]
-        # Iterate through list of ordered tuple pairs (of user and last logout) sorted by most recent logout.
-        for user_name,ll in sorted(lastlogouts.items(), key=operator.itemgetter(1), reverse=true):
-            content = "{0} - {1:%H:%M  %d/%m/%y}".format(user_name,ll)
-            msg_list.append(content)
-        msg = "<br>".join(msg_list)
-        s.sendMessage(user.session,msg)
-    except Exception as e: # catches all errors ?
-        s.sendMessageChannel(0, True, "Error: {}".format(e))
+    msg_list = ["<br>User  -  Last Logged Out"] #Start everything on line below [server]
+    # Iterate through list of ordered tuple pairs (of user and last logout) sorted by most recent logout.
+    for user_name,ll in sorted(lastlogouts.items(), key=operator.itemgetter(1), reverse=true):
+        content = "{0} - {1:%H:%M  %d/%m/%y}".format(user_name,ll)
+        msg_list.append(content)
+    msg = "<br>".join(msg_list)
+    s.sendMessage(user.session,msg)
 
+def cmdInsult(user,args):
+    insultee = args[0] # One who is insulted
+    insult = "{} is a monument to all our sins".format(insultee)
+    s.sendMessageChannel(user.channel, False, insult)
 
 if __name__ == "__main__":
     lastlogouts = {}
