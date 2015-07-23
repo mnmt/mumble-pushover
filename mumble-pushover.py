@@ -127,7 +127,8 @@ def parse_text_command(user, command_text):
     elif command == 'history' or command == 'hist':
         cmdHist(user)
     elif command == 'insult' and len(args)==1: # Since for now just want a username as argument
-        cmdInsult(user,args)
+        insultee = args[0] # One who is insulted
+        cmdInsult(user,insultee)
 
 def cmdHist(user):
     msg_list = ["<br>User  -  Last Logged Out"] #Start everything on line below [server]
@@ -138,9 +139,17 @@ def cmdHist(user):
     msg = "<br>".join(msg_list)
     s.sendMessage(user.session,msg)
 
-def cmdInsult(user,args):
-    insultee = args[0] # One who is insulted
-    insult = "{} is a monument to all our sins".format(insultee)
+with open("insult_adjectives.txt") as myfile:
+    adjectives = myfile.read().split("\n") #.readlines() leaves unneeded \n for each word.
+with open("insult_nouns.txt") as myfile:
+    nouns = myfile.read().split("\n")
+fmt_strings = ["{name} you {adj} {noun}!",
+    "{name}, you are a {adj} {noun}!",
+    "{name} is a {adj} {noun}!"]
+
+def cmdInsult(user,insultee): # User is insulter, args must be a list
+    fmt_string = random.choice(fmt_string) #could have various structures
+    insult = fmt_string.format(name=insultee,adj=random.choice(adjectives),noun=random.choice(nouns))
     s.sendMessageChannel(user.channel, False, insult)
 
 if __name__ == "__main__":
